@@ -1,0 +1,26 @@
+name: Generate Schema Diagram
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PlantUML
+        run: sudo apt-get install -y plantuml
+
+      - name: Render PlantUML
+        run: plantuml -tsvg schema.puml
+
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: schema.svg
