@@ -52,7 +52,8 @@ git --version
 > **Screenshot 1:** Take a screenshot of your terminal showing both version
 > checks and insert it here.
 >
-> `[insert screenshot]`
+> `[insert screenshot]`<img width="928" height="429" alt="Screenshot_1" src="https://github.com/user-attachments/assets/e9e8a03f-1cf0-407c-912d-cba711a35f64" />
+
 
 ---
 
@@ -175,14 +176,14 @@ Complete the sketch for all six relations (`author`, `book`, `writes`, `copy`,
 > relational model? What would go wrong if you stored multiple author IDs in a
 > single column of `book`?
 >
-> *Your answer:*
+> *Your answer:* An N:M (many-to-many) relationship requires a dedicated join relation (like the writes table) because the relational model enforces the First Normal Form (1NF), which dictates that every attribute must contain a single, atomic value. If we tried to store multiple author IDs in a single column within the book table, it would violate 1NF, making queries (like finding all books by a specific author) complex, inefficient, and difficult to manage with standard SQL
 
 > **Question 1.2:** `loan_id` is a surrogate key even though a loan might seem
 > to be uniquely identified by `(member_no, copy_no, loan_date)`. Name one
 > realistic scenario in which that composite key would fail to be a candidate
 > key.
 >
-> *Your answer:*
+> *Your answer:* The composite key (member_no, copy_no, loan_date) would fail to uniquely identify a loan if a member borrows a specific copy of a book, returns it on the same day, and then realizes they still need it and borrows that exact same copy again later on that very same day. Since the date is identical, the composite key would be duplicated, violating the primary key constraint. A surrogate key like loan_id avoids this issue
 
 ---
 
@@ -293,7 +294,8 @@ sqlite3 library.db < schema.sql
 > **Screenshot 2:** Take a screenshot of the terminal showing the `.tables`
 > output and insert it here.
 >
-> `[insert screenshot]`
+> `[insert screenshot]`<img width="929" height="79" alt="Screenshot_2" src="https://github.com/user-attachments/assets/db458ab8-d757-4d8a-8ac9-fe9960b0a87a" />
+
 
 ### Task 2c – Commit
 
@@ -346,12 +348,12 @@ git log --oneline
 `writes`. What does this mean in practice if a librarian wants to delete an
 author who has written at least one book in the catalogue?
 
-> *Your answer:*
+> *Your answer:* It means the database will block the deletion and throw an error. The librarian cannot delete the author from the system as long as there is at least one record in the writes table linking that author to a book. The linked book(s) must be removed (or the author unlinked) first.
 
 **Question 2.2:** `email` in `member` is declared `UNIQUE` but is not the
 primary key. Using the vocabulary from Lecture 03, what kind of key is it?
 
-> *Your answer:*
+> *Your answer:* It is an Alternate Key (or a Candidate Key that was not selected as the Primary Key).
 
 **Question 2.3:** SQLite does not enforce `CHECK` or `FOREIGN KEY` constraints
 by default. Run the following and observe what happens:
@@ -374,7 +376,7 @@ by default. Run the following and observe what happens:
 > the difference between a constraint declared in DDL and one actually enforced
 > at runtime?
 
-> *Your answer:*
+> *Your answer:* In the second attempt (after setting PRAGMA foreign_keys = ON;), I get a "FOREIGN KEY constraint failed" error. This shows that merely declaring a constraint in the DDL (the schema file) does not guarantee data integrity if the database engine does not strictly enforce it at runtime. Some DBMS (like SQLite) require constraints to be explicitly enabled at the session/runtime level to actually protect the data.
 
 ---
 
@@ -551,7 +553,7 @@ not in a `WHERE` clause. What would happen to Koch's row if you moved this
 condition into `WHERE return_date IS NULL`? Why? Refer to the formal definition
 of the outer join from Lecture 03.
 
-> *Your answer:*
+> *Your answer:* If we move it to the WHERE clause, the filtering happens after the LEFT JOIN is fully constructed. While Clara Koch (who has 0 loans) would technically still appear because the padded NULL for her missing loan makes l.return_date IS NULL evaluate to TRUE, this is an exception due to IS NULL. In general, placing conditions on the right-hand table in the WHERE clause turns a LEFT JOIN into an INNER JOIN. For example, if a member only had returned loans (return_date is not null), moving this condition to the WHERE clause would filter out their row entirely, meaning they wouldn't appear in the output at all (not even with a count of 0). Keeping it in the ON clause ensures the LEFT JOIN preserves all members correctly before filtering their loans.
 
 ### Task 4f – Set Difference
 
@@ -599,7 +601,7 @@ VALUES (999, 1, '2026-05-01');
 > **Question 5.1:** Which specific constraint fired? Name the table and the
 > foreign key column involved.
 >
-> *Your answer:*
+> *Your answer:* The constraint that fired is the Foreign Key constraint on the loan table. Specifically, the foreign key column member_no in the loan table tried to reference a value (999) that does not exist in the primary key column of the member table.
 
 ### Task 5b – Delete a member with active loans
 
@@ -615,7 +617,7 @@ DELETE FROM member WHERE member_no = 102;
 > `DELETE`. What happens to Schneider's loan row? Is this behaviour desirable
 > for a library system? Justify your answer.
 >
-> *Your answer:*
+> *Your answer:* If ON DELETE CASCADE was used, deleting Schneider would automatically delete his loan record as well. This behavior is highly undesirable for a library system. Deleting the loan record means the library loses track of the physical book (the copy) that Schneider borrowed, effectively losing library property without accountability. The RESTRICT action is correct here.
 
 ### Task 5c – Verify the composite primary key of `writes`
 
@@ -629,7 +631,7 @@ INSERT INTO writes VALUES (1, '978-0-201-96426-4');
 > here – but also a *primary key*. Can a relation have two candidate keys? Give
 > an example from the library schema.
 >
-> *Your answer:*
+> *Your answer:* Yes, a relation can have multiple candidate keys. An example from our library schema is the member table. The primary key is member_no, but the email attribute is also uniquely constrained (UNIQUE). Therefore, email is another candidate key for the member table.
 
 ---
 
@@ -734,7 +736,8 @@ If you have not used `scp` before, work through this exercise first:
 > **Screenshot 3:** Take a screenshot of `schema.svg` showing all six entities
 > and all five relationships, and insert it here.
 >
-> `[insert screenshot]`
+> `[insert screenshot]`<img width="360" height="346" alt="Screenshot_3" src="https://github.com/user-attachments/assets/e1674eff-bda1-4c9b-aa25-769668a2e031" />
+
 
 Add `schema.svg` to `.gitignore` (it is generated, not authored):
 
@@ -778,7 +781,7 @@ joins. SQL does not prescribe an execution order; the query optimizer may
 reorder these joins freely. Under what condition would reordering a join change
 the *result* of a query? Under what condition is it always safe?
 
-> *Your answer:*
+> *Your answer:* Reordering a join would change the result of a query if outer joins (like LEFT OUTER JOIN or RIGHT OUTER JOIN) are involved, because outer joins are not strictly associative. However, it is always safe to reorder INNER JOIN operations, because inner joins are mathematically commutative and associative. The query optimizer can freely rearrange inner joins to find the most efficient execution path without altering the final data output.
 
 **Question B – NULL semantics:**  
 `return_date` is `NULL` for an open loan. `NULL` in SQL does not mean zero or
@@ -786,7 +789,7 @@ false – it means *unknown*. Consider the query `WHERE return_date = NULL`.
 Will it return the open loans? Explain why or why not and write the correct
 form.
 
-> *Your answer:*
+> *Your answer:* No, it will NOT return the open loans. In SQL, NULL represents an "unknown" or "missing" value, not zero or false. Therefore, using the equality operator (=) with NULL yields an UNKNOWN result, which the WHERE clause treats as false, returning zero rows. To correctly check for missing values, the query must use the IS operator: WHERE return_date IS NULL.
 
 **Question C – Surrogate vs. natural key:**  
 `book` uses `isbn` as its natural primary key; all other entities use surrogate
@@ -794,7 +797,7 @@ integer keys. Suppose the library occasionally receives books without an ISBN
 (unpublished manuscripts, internal reports). How would this affect the `isbn`
 primary key? What design change would you make?
 
-> *Your answer:*
+> *Your answer:* If the library receives books without an ISBN, using isbn as the primary key will fail because primary keys cannot be NULL. To fix this, I would change the design to use a surrogate key for the book table (e.g., book_id INTEGER PRIMARY KEY). The isbn column would then become a regular, nullable attribute with a UNIQUE constraint (an alternate key). Consequently, the foreign keys in the writes and copy tables would be updated to reference book_id instead of isbn.
 
 **Question D – Relational algebra limitations:**  
 Suppose the library wants to find all members who have borrowed the same copy
@@ -805,11 +808,20 @@ What does this tell you about the relationship between relational algebra and
 SQL?
 
 > *Your answer:*
+>  SELECT DISTINCT l1.member_no 
+FROM loan l1 
+JOIN loan l2 ON l1.member_no = l2.member_no 
+   AND l1.copy_no = l2.copy_no 
+   AND l1.loan_id != l2.loan_id;
+>
+> > **Pure Relational Algebra:** Yes, it is possible to express this without aggregation by using the Cartesian product ($\times$), selection ($\sigma$), projection ($\pi$), and renaming ($\rho$) to essentially perform a "self-join" comparing a loan to another loan by the same member for the same copy but with a different loan ID. 
+> **Relationship:** This tells us that while basic relational algebra is highly capable of answering complex relational questions via self-joins and set operations, SQL extends it with practical features like aggregation (`COUNT`, `GROUP BY`) making such queries much more intuitive, readable, and closer to human business logic.
 
 > **Screenshot 4:** Take a screenshot of your terminal showing the output of
 > the query from Task 4d (the join across four relations), and insert it here.
 >
-> `[insert screenshot]`
+> `[insert screenshot]`<img width="914" height="60" alt="Screenshot_4" src="https://github.com/user-attachments/assets/1d244c15-4e74-47ac-852f-a9f052835464" />
+
 
 ---
 
@@ -819,10 +831,22 @@ SQL?
    functional dependencies and check whether any non-key attribute transitively
    depends on a non-key attribute.
 
-2. **Index experiment:** Load 10 000 rows into `loan` using a script that
+   Yes, the copy relation is in 3NF.
+
+   Primary Key: copy_no
+
+   Functional Dependencies: copy_no -> isbn, shelf_loc
+
+   Analysis: All non-key attributes (isbn, shelf_loc) depend strictly on the primary key (copy_no). There    is no transitive dependency (e.g., isbn does not determine shelf_loc, because multiple copies of the      same ISBN can be on different shelves, or different books can share a shelf). Therefore, every non-key    attribute is non-transitively dependent on the primary key, satisfying 3NF
+
+3. **Index experiment:** Load 10 000 rows into `loan` using a script that
    generates random (but valid) `member_no` and `copy_no` values. Time the
    query `SELECT * FROM loan WHERE member_no = 101` before and after creating
    an index:
+
+   Before creating the index, the query SELECT COUNT(*) FROM loan WHERE member_no = 101; scanned the         entire table, taking around [ 0.00025s] seconds.
+   After executing CREATE INDEX idx_loan_member ON loan(member_no);, the same query executed in              [0.00000s] seconds. The B-Tree index allowed SQLite to jump directly to the relevant rows, avoiding a      full table scan and drastically reducing query time
+
 
    ```sql
    CREATE INDEX idx_loan_member ON loan(member_no);
@@ -830,13 +854,26 @@ SQL?
 
    Use SQLite's `.timer ON` to measure. Report the difference.
 
-3. **Recursive CTE:** The library wants to know the "borrow chain" – if
+5. **Recursive CTE:** The library wants to know the "borrow chain" – if
    member A borrowed a copy and then member B borrowed the same copy after A,
    and then C after B, output all such chains of length ≥ 2 for any copy.
    This requires ordering loans by `loan_date` per copy. Write the query; you
    may need a window function or a self-join.
 
-4. **GitHub Actions:** Add a workflow (`.github/workflows/release.yml`) that:
+   WITH BorrowChain AS (
+    SELECT 
+        copy_no,
+        member_no AS current_borrower,
+        loan_date AS date_borrowed,
+        LEAD(member_no) OVER (PARTITION BY copy_no ORDER BY loan_date) AS next_borrower
+    FROM loan
+)
+SELECT * 
+FROM BorrowChain 
+WHERE next_borrower IS NOT NULL;
+
+
+7. **GitHub Actions:** Add a workflow (`.github/workflows/release.yml`) that:
    - Installs PlantUML
    - Renders `schema.puml` to `schema.svg`
    - Publishes a GitHub Release with `schema.svg` attached on every `v*` tag
