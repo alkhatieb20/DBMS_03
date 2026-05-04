@@ -1,0 +1,53 @@
+@startuml
+!define PK <b><color:gold>PK</color></b>
+!define FK <i><color:gray>FK</color></i>
+
+entity author {
+    PK author_id : INTEGER
+    --
+    last_name    : TEXT
+    first_name   : TEXT
+}
+
+entity book {
+    PK isbn     : TEXT
+    --
+    title       : TEXT
+    pub_year    : INTEGER
+}
+
+entity writes {
+    PK FK author_id : INTEGER
+    PK FK isbn      : TEXT
+}
+
+entity copy {
+    PK copy_no  : INTEGER
+    --
+    FK isbn     : TEXT
+    shelf_loc   : TEXT
+}
+
+entity member {
+    PK member_no   : INTEGER
+    --
+    full_name      : TEXT
+    email          : TEXT <<UNIQUE>>
+    enrolled_on    : DATE
+}
+
+entity loan {
+    PK loan_id     : INTEGER
+    --
+    FK member_no   : INTEGER
+    FK copy_no     : INTEGER
+    loan_date      : DATE
+    return_date    : DATE <<nullable>>
+}
+
+author   ||--o{ writes : "writes"
+book     ||--o{ writes : "written by"
+book     ||--|{ copy   : "available as"
+member   ||--o{ loan   : "places"
+copy     ||--o{ loan   : "borrowed in"
+@enduml
